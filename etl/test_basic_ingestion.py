@@ -7,13 +7,13 @@ from atc.etl import Extractor, Loader, Orchestration, MultiInputTransformer
 from autofaker import Autodata
 from pyspark.sql import DataFrame
 
+from functools import reduce
+from pyspark.sql import DataFrame
+
 
 class TimestampTransformer(MultiInputTransformer):
     def process_many(self, dataset: Dict[str, DataFrame]) -> DataFrame:
-        df: DataFrame = None
-        for k in dataset:
-            df = dataset[k].union(df)
-        return df
+        return reduce(DataFrame.unionAll, dataset.values())
 
 
 class PassLoader(Loader):
@@ -49,5 +49,14 @@ class BasicIngestionTestCase(unittest.TestCase):
     def test_returns_dataframe(self):
         self.assertIsNotNone(self.result)
 
-    def test_returned_dataframe_contains_timestamp_column(self):
-        self.assertTrue(self.result.columns.__contains__('timestamp'))
+    def test_returned_dataframe_contains_id_column(self):
+        self.assertTrue(self.result.columns.__contains__('id'))
+
+    def test_returned_dataframe_contains_id_column(self):
+        self.assertTrue(self.result.columns.__contains__('id'))
+
+    def test_returned_dataframe_contains_name_column(self):
+        self.assertTrue(self.result.columns.__contains__('name'))
+
+    def test_returned_dataframe_contains_address_column(self):
+        self.assertTrue(self.result.columns.__contains__('address'))
