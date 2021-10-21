@@ -2,3 +2,4 @@ autofaker
 atc-dataplatform
 pyspark
 setuptools
+pytest
