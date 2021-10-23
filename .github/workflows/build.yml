@@ -57,9 +57,9 @@ jobs:
           python-version: ${{ matrix.python_version }}
       - name: Install test requirements
         run: |
-          pip install -i pytest
-          pip install -i pandas
-          pip install -i pyspark
+          pip install pytest
+          pip install pandas
+          pip install pyspark
           pip install -i https://test.pypi.org/simple/ autofaker
       - name: Install the package
         run: python setup.py develop
