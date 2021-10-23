@@ -35,7 +35,7 @@ jobs:
       - name: Run Tests
         run: python -m pytest -v
   test:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     strategy:
       matrix:
         python_version:
