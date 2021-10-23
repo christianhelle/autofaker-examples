@@ -52,9 +52,6 @@ class BasicIngestionTestCase(unittest.TestCase):
     def test_returned_dataframe_contains_id_column(self):
         self.assertTrue(self.result.columns.__contains__('id'))
 
-    def test_returned_dataframe_contains_id_column(self):
-        self.assertTrue(self.result.columns.__contains__('id'))
-
     def test_returned_dataframe_contains_name_column(self):
         self.assertTrue(self.result.columns.__contains__('name'))
 
