@@ -30,5 +30,5 @@ class AnonymousSimpleClassTestCase(unittest.TestCase):
 
 
 class SimpleClass:
-    id = 123
+    id = -1
     text = 'test'
