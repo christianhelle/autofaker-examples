@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-20.04, ubuntu-18.04, windows-2022, windows-2019, macos-10.15, macos-11]
         python_version:
           - "3.7"
           - "3.8"
@@ -59,6 +59,7 @@ jobs:
           python-version: ${{ matrix.python_version }}
       - name: Install test requirements
         run: |
+          pip install faker
           pip install pytest
           pip install pandas
           pip install pyspark
