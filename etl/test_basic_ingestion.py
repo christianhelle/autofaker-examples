@@ -4,6 +4,7 @@ from typing import Dict
 from unittest.mock import MagicMock
 
 from atc.etl import Extractor, Loader, Orchestration, MultiInputTransformer
+from atc.spark import Spark
 from autofaker import Autodata
 from pyspark.sql import DataFrame
 
@@ -31,8 +32,11 @@ class BasicIngestionTestCase(unittest.TestCase):
             name: str
             address: str
 
+        pdf = Autodata.create_pandas_dataframe(Person, use_fake_data=True)
+        sdf = Spark.get().createDataFrame(pdf)
+
         extractor: Extractor = MagicMock()
-        extractor.read.return_value = Autodata.create_spark_dataframe(Person, use_fake_data=True)
+        extractor.read.return_value = sdf
 
         df = (Orchestration
               .extract_from(extractor)
