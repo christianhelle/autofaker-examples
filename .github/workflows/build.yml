@@ -26,12 +26,12 @@ jobs:
         with:
           java-version: '8'
           distribution: 'temurin'
-      - name: Install test requirements
-        run: pip install -r requirements.txt
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python_version }}
+      - name: Install test requirements
+        run: pip install -r requirements.txt
       - name: Install the package
         run: python setup.py develop
       - name: Run Tests
