@@ -1,5 +1,5 @@
-autofaker
-atc-dataplatform
-pyspark
-setuptools
-pytest
+autofaker==0.4.9
+atc-dataplatform==1.0.50
+pyspark==3.3.0
+setuptools==65.4.1
+pytest==7.1.3
