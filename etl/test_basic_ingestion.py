@@ -1,23 +1,33 @@
 import unittest
 from dataclasses import dataclass
-from typing import Dict
-from unittest.mock import MagicMock
 
-from atc.etl import Extractor, Loader, Orchestration, MultiInputTransformer
+from atc.etl import Extractor, Loader, Orchestrator, Transformer
 from atc.spark import Spark
 from autofaker import Autodata
 from pyspark.sql import DataFrame
-
-from functools import reduce
-from pyspark.sql import DataFrame
+from pyspark.sql.functions import current_timestamp
 
 
-class TimestampTransformer(MultiInputTransformer):
-    def process_many(self, dataset: Dict[str, DataFrame]) -> DataFrame:
-        return reduce(DataFrame.unionAll, dataset.values())
+class BasicExtractor(Extractor):
+    def read(self) -> DataFrame:
+        @dataclass
+        class Person:
+            id: int
+            name: str
+            address: str
+
+        return Spark.get().createDataFrame(
+            Autodata.create_pandas_dataframe(
+                Person,
+                use_fake_data=True))
 
 
-class PassLoader(Loader):
+class TimestampTransformer(Transformer):
+    def process(self, df: DataFrame) -> DataFrame:
+        return df.withColumn("timestamp", current_timestamp())
+
+
+class ByPassLoader(Loader):
     def save(self, df: DataFrame) -> DataFrame:
         return df
 
@@ -26,29 +36,12 @@ class BasicIngestionTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        @dataclass
-        class Person:
-            id: int
-            name: str
-            address: str
-
-        pdf = Autodata.create_pandas_dataframe(Person, use_fake_data=True)
-        sdf = Spark.get().createDataFrame(pdf)
-
-        extractor: Extractor = MagicMock()
-        extractor.read.return_value = sdf
-
-        df = (Orchestration
-              .extract_from(extractor)
-              .extract_from(extractor)
-              .transform_with(TimestampTransformer())
-              .load_into(PassLoader())
-              .build()
-              .execute())
-
-        df.show()
-
-        cls.result = df
+        cls.result = (Orchestrator()
+                      .extract_from(BasicExtractor())
+                      .transform_with(TimestampTransformer())
+                      .load_into(ByPassLoader())
+                      .execute()
+                      ["TimestampTransformer"])
 
     def test_returns_dataframe(self):
         self.assertIsNotNone(self.result)
@@ -61,3 +54,6 @@ class BasicIngestionTestCase(unittest.TestCase):
 
     def test_returned_dataframe_contains_address_column(self):
         self.assertTrue(self.result.columns.__contains__('address'))
+
+    def test_returned_dataframe_contains_timestamp_column(self):
+        self.assertTrue(self.result.columns.__contains__('timestamp'))
