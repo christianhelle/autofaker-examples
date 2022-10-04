@@ -1,5 +1,6 @@
 import unittest
 from dataclasses import dataclass
+from unittest.mock import Mock
 
 from atc.etl import Extractor, Loader, Orchestrator, Transformer
 from atc.spark import Spark
@@ -8,40 +9,36 @@ from pyspark.sql import DataFrame
 from pyspark.sql.functions import current_timestamp
 
 
-class BasicExtractor(Extractor):
-    def read(self) -> DataFrame:
-        @dataclass
-        class Person:
-            id: int
-            name: str
-            address: str
-
-        return Spark.get().createDataFrame(
-            Autodata.create_pandas_dataframe(
-                Person,
-                use_fake_data=True))
-
-
 class TimestampTransformer(Transformer):
     def process(self, df: DataFrame) -> DataFrame:
         return df.withColumn("timestamp", current_timestamp())
-
-
-class ByPassLoader(Loader):
-    def save(self, df: DataFrame) -> DataFrame:
-        return df
 
 
 class BasicIngestionTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
+        @dataclass
+        class Person:
+            id: int
+            name: str
+            address: str
+
+        extractor = Extractor()
+        extractor.read = Mock(
+            return_value=(Spark.get().createDataFrame(
+                Autodata.create_pandas_dataframe(
+                    Person,
+                    use_fake_data=True))))
+
+        loader = Loader()
+        loader.save = Mock(return_value=None)
+
         cls.result = (Orchestrator()
-                      .extract_from(BasicExtractor())
+                      .extract_from(extractor)
                       .transform_with(TimestampTransformer())
-                      .load_into(ByPassLoader())
-                      .execute()
-                      ["TimestampTransformer"])
+                      .load_into(loader)
+                      .execute())["TimestampTransformer"]
 
     def test_returns_dataframe(self):
         self.assertIsNotNone(self.result)
