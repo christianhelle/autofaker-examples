@@ -41,7 +41,7 @@ class BasicIngestionTestCase(unittest.TestCase):
                       .execute())["TimestampTransformer"]
 
     def test_returns_dataframe(self):
-        self.assertIsNotNone(self.result)
+        self.assertIsInstance(self.result, DataFrame)
 
     def test_returned_dataframe_contains_id_column(self):
         self.assertTrue(self.result.columns.__contains__('id'))
