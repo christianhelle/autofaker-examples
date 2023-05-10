@@ -11,6 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
+      timeout-minutes: 10
       matrix:
         os: 
           - ubuntu-22.04
@@ -48,6 +49,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
+      timeout-minutes: 10
       matrix:
         os: [ubuntu-latest]
         python_version:
