@@ -18,9 +18,8 @@ jobs:
           - ubuntu-20.04
           - windows-2022
           - windows-2019
-          - macos-10.15
-          - macos-11
           - macos-12
+          - macos-13
         python_version:
           - "3.7"
           - "3.8"
