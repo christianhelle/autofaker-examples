@@ -9,9 +9,9 @@ on:
 jobs:
   production:
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
     strategy:
       fail-fast: false
-      timeout-minutes: 10
       matrix:
         os: 
           - ubuntu-22.04
