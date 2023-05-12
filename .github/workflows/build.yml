@@ -46,9 +46,9 @@ jobs:
         continue-on-error: true
   test:
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
     strategy:
       fail-fast: false
-      timeout-minutes: 10
       matrix:
         os: [ubuntu-latest]
         python_version:
