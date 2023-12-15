@@ -1,5 +1,5 @@
 autofaker
 atc-dataplatform
 pyspark==3.3.0
-setuptools==65.5.1
+setuptools==65.7.0
 pytest
