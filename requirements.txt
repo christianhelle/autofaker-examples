@@ -1,5 +1,6 @@
 autofaker
 atc-dataplatform
-pyspark==3.3.0
 setuptools
 pytest
+pandas
+pyspark==3.3.0
